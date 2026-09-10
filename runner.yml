@@ -1,0 +1,83 @@
+- name: Runner Setup
+  hosts: all
+  become: yes
+  tasks:
+  - name: Install python requests
+    ansible.builtin.shell: pip3.13 install requests
+
+  - name: Runner container
+    community.docker.docker_container:
+      name: "{{ item }}"
+      image: rkalluru/github-runner:d87
+      state: started
+      recreate: true
+      pull: always
+      restart_policy: always
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+      env:
+        NAME: "{{ item }}"
+        TOKEN: "{{ TOKEN }}"
+        ORG: "https://github.com/sdevops5427"
+    loop:
+      - runner1
+      - runner2
+      - runner3
+      - runner4
+      - runner5
+      - runner6
+    register: out
+    ignore_errors: yes
+
+  - name: Run from Scratch
+    when: out.failed is defined
+    block:
+      - name: Set Prompt
+        ansible.builtin.shell: set-prompt -skip-apply github-runner
+
+      - name: Download Docker repo
+        ansible.builtin.get_url:
+          url: https://download.docker.com/linux/rhel/docker-ce.repo
+          dest: /etc/yum.repos.d/docker.repo
+
+      - name: Install Docker
+        ansible.builtin.dnf:
+          name: docker-ce
+          state: installed
+
+      - name: Start Docker
+        ansible.builtin.systemd_service:
+          name: docker
+          state: restarted
+          enabled: yes
+          daemon-reload: yes
+
+      - name: Add github runner user
+        ansible.builtin.user:
+          name: github-runner
+          home: /github-runner
+          groups: docker
+
+      - name: Runner container
+        community.docker.docker_container:
+          name: "{{ item }}"
+          image: rkalluru/github-runner:d87
+          state: started
+          recreate: true
+          pull: always
+          restart_policy: always
+          volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+          env:
+            NAME: "{{ item }}"
+            TOKEN: "{{ TOKEN }}"
+            ORG: "https://github.com/sdevops5427"
+        loop:
+          - runner1
+          - runner2
+          - runner3
+          - runner4
+          - runner5
+          - runner6
+      - name: give write permission
+        ansible.builtin.shell: chmod o+rw /var/run/docker.sock
