@@ -2,8 +2,9 @@
   hosts: all
   become: yes
   tasks:
-  - name: Install python requests
-    ansible.builtin.shell: pip3.13 install requests
+  - name: Install requests
+    ansible.builtin.pip:
+      name: requests
 
   - name: Runner container
     community.docker.docker_container:
