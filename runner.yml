@@ -9,7 +9,7 @@
   - name: Runner container
     containers.podman.podman_container:
       name: "{{ item }}"
-      image: rkalluru/github-runner:d87
+      image: docker.io/rkalluru/github-runner:d87
       state: started
       recreate: true
       pull: always
@@ -33,8 +33,8 @@
   - name: Run from Scratch
     when: out.failed is defined
     block:
-      - name: Set Prompt
-        ansible.builtin.shell: set-prompt -skip-apply github-runner
+#      - name: Set Prompt
+#        ansible.builtin.shell: set-prompt -skip-apply github-runner
 
       - name: Download Docker repo
         ansible.builtin.get_url:
