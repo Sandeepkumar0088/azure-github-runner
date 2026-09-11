@@ -12,7 +12,7 @@
       image: docker.io/rkalluru/github-runner:d87
       state: started
       recreate: true
-      pull: always
+      pull: true
       restart_policy: always
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
@@ -60,12 +60,15 @@
           groups: docker
 
       - name: Runner container
-        community.docker.docker_container:
+        containers:
+          podman:
+            podman_container:
+        containers.podman.podman_container:
           name: "{{ item }}"
-          image: rkalluru/github-runner:d87
+          image: docker.io/rkalluru/github-runner:d87
           state: started
           recreate: true
-          pull: always
+          pull: true
           restart_policy: always
           volumes:
             - /var/run/docker.sock:/var/run/docker.sock
