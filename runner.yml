@@ -93,12 +93,12 @@
         name: requests
 
     - name: Pull GitHub Runner image
-      community.docker.docker_container:
+      containers.podman.podman_image:
         name: docker.io/rkalluru/github-runner:d87
         pull: true
 
     - name: Runner container
-      community.docker.docker_container:
+      containers.podman.podman_container:
         name: "{{ item }}"
         image: docker.io/rkalluru/github-runner:d87
         state: started
