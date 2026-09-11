@@ -107,7 +107,7 @@
         security_opt:
           - label=disable
         volumes:
-          - /var/run/docker.sock:/var/run/docker.sock
+          - /run/podman/podman.sock:/var/run/docker.sock
         env:
           NAME: "{{ item }}"
           TOKEN: "{{ TOKEN }}"
@@ -163,7 +163,7 @@
             recreate: true
             restart_policy: always
             volumes:
-              - /var/run/docker.sock:/var/run/docker.sock
+              - /run/podman/podman.sock:/var/run/docker.sock
             env:
               NAME: "{{ item }}"
               TOKEN: "{{ TOKEN }}"
