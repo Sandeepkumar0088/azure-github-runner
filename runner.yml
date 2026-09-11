@@ -7,7 +7,6 @@
       name: requests
 
   - name: Runner container
-    containers:
     containers.podman.podman_container:
       name: "{{ item }}"
       image: docker.io/rkalluru/github-runner:d87
