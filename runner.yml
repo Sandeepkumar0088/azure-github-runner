@@ -60,9 +60,6 @@
           groups: docker
 
       - name: Runner container
-        containers:
-          podman:
-            podman_container:
         containers.podman.podman_container:
           name: "{{ item }}"
           image: docker.io/rkalluru/github-runner:d87
