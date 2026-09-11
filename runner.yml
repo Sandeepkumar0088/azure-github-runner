@@ -7,7 +7,7 @@
       name: requests
 
   - name: Runner container
-    community.docker.docker_container:
+    containers.podman.podman_container:
       name: "{{ item }}"
       image: rkalluru/github-runner:d87
       state: started

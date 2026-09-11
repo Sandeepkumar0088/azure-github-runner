@@ -128,10 +128,16 @@ resource "null_resource" "jenkins" {
   }
 
   provisioner "remote-exec" {
+    # inline = [
+    #   "sudo dnf install -y git ansible-core docker python3-pip",
+    #   "sudo systemctl enable --now docker",
+    #   "ansible-galaxy collection install community.docker",
+    #   "ansible-pull -i localhost, -U https://github.com/Sandeepkumar0088/azure-github-runner.git runner.yml -e TOKEN=${var.TOKEN}"
+    # ]
     inline = [
-      "sudo dnf install -y git ansible-core docker python3-pip",
-      "sudo systemctl enable --now docker",
-      "ansible-galaxy collection install community.docker",
+      "sudo dnf install -y podman python3-pip ansible-core",
+      "sudo systemctl enable --now podman.socket",
+      "ansible-galaxy collection install containers.podman",
       "ansible-pull -i localhost, -U https://github.com/Sandeepkumar0088/azure-github-runner.git runner.yml -e TOKEN=${var.TOKEN}"
     ]
   }
