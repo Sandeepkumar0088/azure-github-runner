@@ -88,7 +88,7 @@ resource "azurerm_network_interface_security_group_association" "github_action" 
 }
 
 resource "azurerm_linux_virtual_machine" "github_action" {
-  name                = "github_action_vm"
+  name                = "github-action-vm"
   resource_group_name = azurerm_resource_group.github_action.name
   location            = azurerm_resource_group.github_action.location
   size                = "Standard_D4ls_v6"
