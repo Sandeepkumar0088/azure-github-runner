@@ -129,10 +129,9 @@ resource "null_resource" "jenkins" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo dnf install -y git ansible-core",
-      "sudo ansible-galaxy collection install community.docker",
-      "sudo dnf install python3.13-pip -y",
-      "sudo pip3.11 install ansible",
+      "sudo dnf install -y git ansible-core docker python3-pip",
+      "sudo systemctl enable --now docker",
+      "ansible-galaxy collection install community.docker",
       "ansible-pull -i localhost, -U https://github.com/Sandeepkumar0088/azure-github-runner.git runner.yml -e TOKEN=${var.TOKEN}"
     ]
   }
