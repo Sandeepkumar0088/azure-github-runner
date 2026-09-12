@@ -128,12 +128,6 @@ resource "null_resource" "jenkins" {
   }
 
   provisioner "remote-exec" {
-    # inline = [
-    #   "sudo dnf install -y git ansible-core docker python3-pip",
-    #   "sudo systemctl enable --now docker",
-    #   "ansible-galaxy collection install community.docker",
-    #   "ansible-pull -i localhost, -U https://github.com/Sandeepkumar0088/azure-github-runner.git runner.yml -e TOKEN=${var.TOKEN}"
-    # ]
     inline = [
       "sudo dnf install -y podman python3-pip ansible-core",
       "sudo systemctl enable --now podman.socket",
@@ -142,4 +136,25 @@ resource "null_resource" "jenkins" {
     ]
   }
 }
+resource "null_resource" "permissions" {
+
+  depends_on = [
+    azurerm_linux_virtual_machine.github_action,
+    null_resource.jenkins
+  ]
+
+  connection {
+    type     = "ssh"
+    host     = azurerm_linux_virtual_machine.github_action.public_ip_address
+    user     = "sandeep"
+    password = "Sandeep.,@0088"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo chmod 666 /run/podman/podman.sock"
+    ]
+  }
+}
+
 variable "TOKEN" {}
