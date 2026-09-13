@@ -2,7 +2,7 @@ FROM              docker.io/redhat/ubi9
 RUN               curl -L -o /etc/yum.repos.d/hashi.repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
 RUN               curl -o /etc/yum.repos.d/docker.repo https://download.docker.com/linux/rhel/docker-ce.repo
 RUN               dnf install libicu make terraform docker-ce-cli unzip -y
-RUN               cd /tmp && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install && rm -rf aws*
+#RUN               cd /tmp && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install && rm -rf aws*
 RUN               curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o /bin/kubectl && chmod +x /bin/kubectl
 # AZURE CLI
 RUN               rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
@@ -18,7 +18,14 @@ RUN               curl https://raw.githubusercontent.com/helm/helm/main/scripts/
 # ARGOCD
 RUN               curl -sSL -o /bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64 && chmod +x /bin/argocd
 # TRIVY
-RUN               dnf install https://github.com/aquasecurity/trivy/releases/download/v0.65.0/trivy_0.65.0_Linux-64bit.rpm -y
+#RUN              dnf install https://github.com/aquasecurity/trivy/releases/download/v0.65.0/trivy_0.65.0_Linux-64bit.rpm -y
+RUN               echo '[trivy]' > /etc/yum.repos.d/trivy.repo && \
+                  echo 'name=Trivy repository' >> /etc/yum.repos.d/trivy.repo && \
+                  echo 'baseurl=https://aquasecurity.github.io/trivy-repo/rpm/releases/$basearch/' >> /etc/yum.repos.d/trivy.repo && \
+                  echo 'gpgcheck=1' >> /etc/yum.repos.d/trivy.repo && \
+                  echo 'enabled=1' >> /etc/yum.repos.d/trivy.repo && \
+                  echo 'gpgkey=https://aquasecurity.github.io/trivy-repo/rpm/public.key' >> /etc/yum.repos.d/trivy.repo
+RUN               dnf install -y trivy
 RUN               useradd github
 USER              github
 WORKDIR           /home/github
