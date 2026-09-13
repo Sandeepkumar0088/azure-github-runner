@@ -4,6 +4,11 @@ RUN               curl -o /etc/yum.repos.d/docker.repo https://download.docker.c
 RUN               dnf install libicu make terraform docker-ce-cli unzip -y
 RUN               cd /tmp && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install && rm -rf aws*
 RUN               curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o /bin/kubectl && chmod +x /bin/kubectl
+# AZURE CLI
+RUN               rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
+                  dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm && \
+                  dnf install -y azure-cli && \
+                  dnf clean all
 # NODEJS
 RUN               dnf module disable nodejs -y && dnf module enable nodejs:22 -y && dnf install nodejs npm -y
 # MAVEN
