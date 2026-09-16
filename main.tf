@@ -152,7 +152,9 @@ resource "null_resource" "permissions" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo chmod 666 /run/podman/podman.sock"
+      "sudo chmod 666 /run/podman/podman.sock",
+      "sudo az vm identity assign --resource-group github_action_rg --name github-action-vm"
+
     ]
   }
 }
