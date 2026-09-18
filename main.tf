@@ -100,6 +100,9 @@ resource "azurerm_linux_virtual_machine" "github_action" {
   network_interface_ids = [
     azurerm_network_interface.jenkins.id
   ]
+  identity {
+    type = "SystemAssigned"
+  }
 
   os_disk {
     caching              = "ReadWrite"
@@ -158,11 +161,7 @@ resource "null_resource" "permissions" {
       "sudo dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm",
 
       "sudo dnf install -y azure-cli",
-      "sudo az vm identity assign --resource-group github_action_rg --name github-action-vm",
-
-      "PRINCIPAL_ID=$(az vm show --resource-group github_action_rg --query identity.principalId -o tsv)",
-      "echo $PRINCIPAL_ID",
-      "az role assignment create --assignee-object-id $PRINCIPAL_ID --assignee-principal-type ServicePrincipal --role Contributor --scope /subscriptions/${var.SUBSCRIPTION_ID}"
+      "sudo az vm identity assign --resource-group github_action_rg --name github-action-vm"
     ]
   }
 }
@@ -170,4 +169,17 @@ resource "null_resource" "permissions" {
 variable "TOKEN" {}
 variable "SUBSCRIPTION_ID" {
   default = "bb2e4b65-7863-4a64-99b2-cd7d29b73bd7"
+}
+
+resource "azurerm_role_assignment" "vm_contributor" {
+
+  depends_on = [
+    azurerm_linux_virtual_machine.github_action,
+    null_resource.jenkins,
+    null_resource.permissions
+  ]
+
+  scope                = "/subscriptions/${var.SUBSCRIPTION_ID}"
+  role_definition_name = "Contributor"
+  principal_id         = azurerm_linux_virtual_machine.github_action.identity[0].principal_id
 }
