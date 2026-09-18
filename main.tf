@@ -183,7 +183,7 @@ resource "azurerm_role_assignment" "vm_contributor" {
   principal_id         = azurerm_linux_virtual_machine.github_action.identity[0].principal_id
 }
 
-resource "azurerm_role_assignment" "vm_contributor" {
+resource "azurerm_role_assignment" "identity_contributor" {
 
   depends_on = [
     azurerm_linux_virtual_machine.github_action,
