@@ -175,7 +175,7 @@ resource "azurerm_role_assignment" "vm_contributor" {
 
   depends_on = [
     azurerm_linux_virtual_machine.github_action,
-    azurerm_resource_group
+    azurerm_resource_group.github_action
   ]
 
   scope                = azurerm_resource_group.github_action.id
