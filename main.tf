@@ -161,7 +161,7 @@ resource "null_resource" "permissions" {
       "sudo dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm",
 
       "sudo dnf install -y azure-cli",
-      "sudo az vm identity assign --resource-group github_action_rg --name github-action-vm"
+      # "sudo az vm identity assign --resource-group github_action_rg --name github-action-vm"
     ]
   }
 }
