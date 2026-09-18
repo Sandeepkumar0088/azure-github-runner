@@ -175,6 +175,18 @@ resource "azurerm_role_assignment" "vm_contributor" {
 
   depends_on = [
     azurerm_linux_virtual_machine.github_action,
+    azurerm_resource_group
+  ]
+
+  scope                = azurerm_resource_group.github_action.id
+  role_definition_name = "Contributor"
+  principal_id         = azurerm_linux_virtual_machine.github_action.identity[0].principal_id
+}
+
+resource "azurerm_role_assignment" "vm_contributor" {
+
+  depends_on = [
+    azurerm_linux_virtual_machine.github_action,
     null_resource.jenkins,
     null_resource.permissions
   ]
