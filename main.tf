@@ -153,10 +153,21 @@ resource "null_resource" "permissions" {
   provisioner "remote-exec" {
     inline = [
       "sudo chmod 666 /run/podman/podman.sock",
-      "sudo az vm identity assign --resource-group github_action_rg --name github-action-vm"
+      "sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc",
 
+      "sudo dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm",
+
+      "sudo dnf install -y azure-cli",
+      "sudo az vm identity assign --resource-group github_action_rg --name github-action-vm",
+
+      "PRINCIPAL_ID=$(az vm show --resource-group github_action_rg --query identity.principalId -o tsv)",
+      "echo $PRINCIPAL_ID",
+      "az role assignment create --assignee-object-id $PRINCIPAL_ID --assignee-principal-type ServicePrincipal --role Contributor --scope /subscriptions/${var.SUBSCRIPTION_ID}"
     ]
   }
 }
 
 variable "TOKEN" {}
+variable "SUBSCRIPTION_ID" {
+  default = "bb2e4b65-7863-4a64-99b2-cd7d29b73bd7"
+}
