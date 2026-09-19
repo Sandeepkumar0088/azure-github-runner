@@ -156,20 +156,26 @@ resource "null_resource" "permissions" {
   provisioner "remote-exec" {
     inline = [
       "sudo chmod 666 /run/podman/podman.sock",
+
       "sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc",
-
       "sudo dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm",
-
       "sudo dnf install -y azure-cli",
-      "cat <<EOF > /etc/yum.repos.d/kubernetes.repo && echo -e '[kubernetes]\nname=Kubernetes\nbaseurl=https://pkgs.k8s.io/core:/stable:/v1.34/rpm/\nenabled=1\ngpgcheck=1\ngpgkey=https://pkgs.k8s.io/core:/stable:/v1.34/rpm/repodata/repomd.xml.key' > /etc/yum.repos.d/kubernetes.repo && dnf install -y kubectl",
+
+      "echo '[kubernetes]' | sudo tee /etc/yum.repos.d/kubernetes.repo > /dev/null",
+      "echo 'name=Kubernetes' | sudo tee -a /etc/yum.repos.d/kubernetes.repo > /dev/null",
+      "echo 'baseurl=https://pkgs.k8s.io/core:/stable:/v1.34/rpm/' | sudo tee -a /etc/yum.repos.d/kubernetes.repo > /dev/null",
+      "echo 'enabled=1' | sudo tee -a /etc/yum.repos.d/kubernetes.repo > /dev/null",
+      "echo 'gpgcheck=1' | sudo tee -a /etc/yum.repos.d/kubernetes.repo > /dev/null",
+      "echo 'gpgkey=https://pkgs.k8s.io/core:/stable:/v1.34/rpm/repodata/repomd.xml.key' | sudo tee -a /etc/yum.repos.d/kubernetes.repo > /dev/null",
+
+      "sudo dnf install -y kubectl",
+
       "curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash",
 
       "export PATH=$PATH:/usr/local/bin",
-      "VERSION=$(curl -s https://github.com/derailed/k9s/releases | grep 'Release v' | head -1 | sed -e 's|<h1>||' -e 's|</h1>||' | awk '{print $2}')",
-      "dnf install https://github.com/derailed/k9s/releases/download/$${VERSION}/k9s_linux_amd64.rpm -y"
 
-
-
+      "VERSION=$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | grep '\"tag_name\"' | cut -d '\"' -f 4)",
+      "sudo dnf install -y https://github.com/derailed/k9s/releases/download/$${VERSION}/k9s_linux_amd64.rpm"
     ]
   }
 }
