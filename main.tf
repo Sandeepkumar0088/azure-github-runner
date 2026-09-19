@@ -161,37 +161,18 @@ resource "null_resource" "permissions" {
       "sudo dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm",
 
       "sudo dnf install -y azure-cli",
-      # "sudo az vm identity assign --resource-group github_action_rg --name github-action-vm"
+      "cat <<EOF > /etc/yum.repos.d/kubernetes.repo && echo -e '[kubernetes]\nname=Kubernetes\nbaseurl=https://pkgs.k8s.io/core:/stable:/v1.34/rpm/\nenabled=1\ngpgcheck=1\ngpgkey=https://pkgs.k8s.io/core:/stable:/v1.34/rpm/repodata/repomd.xml.key' > /etc/yum.repos.d/kubernetes.repo && dnf install -y kubectl",
+      "curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash",
+
+      "export PATH=$PATH:/usr/local/bin",
+      "VERSION=$(curl -s https://github.com/derailed/k9s/releases | grep 'Release v' | head -1 | sed -e 's|<h1>||' -e 's|</h1>||' | awk '{print $2}')",
+      "dnf install https://github.com/derailed/k9s/releases/download/${VERSION}/k9s_linux_amd64.rpm -y"
+
+
+
     ]
   }
 }
 
 variable "TOKEN" {}
-variable "SUBSCRIPTION_ID" {
-  default = "bb2e4b65-7863-4a64-99b2-cd7d29b73bd7"
-}
 
-resource "azurerm_role_assignment" "vm_contributor" {
-
-  depends_on = [
-    azurerm_linux_virtual_machine.github_action,
-    azurerm_resource_group.github_action
-  ]
-
-  scope                = azurerm_resource_group.github_action.id
-  role_definition_name = "Contributor"
-  principal_id         = azurerm_linux_virtual_machine.github_action.identity[0].principal_id
-}
-
-resource "azurerm_role_assignment" "identity_contributor" {
-
-  depends_on = [
-    azurerm_linux_virtual_machine.github_action,
-    null_resource.jenkins,
-    null_resource.permissions
-  ]
-
-  scope                = "/subscriptions/${var.SUBSCRIPTION_ID}"
-  role_definition_name = "Contributor"
-  principal_id         = azurerm_linux_virtual_machine.github_action.identity[0].principal_id
-}
