@@ -166,7 +166,7 @@ resource "null_resource" "permissions" {
 
       "export PATH=$PATH:/usr/local/bin",
       "VERSION=$(curl -s https://github.com/derailed/k9s/releases | grep 'Release v' | head -1 | sed -e 's|<h1>||' -e 's|</h1>||' | awk '{print $2}')",
-      "dnf install https://github.com/derailed/k9s/releases/download/${VERSION}/k9s_linux_amd64.rpm -y"
+      "dnf install https://github.com/derailed/k9s/releases/download/$${VERSION}/k9s_linux_amd64.rpm -y"
 
 
 
