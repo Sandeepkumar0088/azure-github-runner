@@ -117,7 +117,7 @@ resource "azurerm_linux_virtual_machine" "github_action" {
   }
 }
 
-resource "null_resource" "jenkins" {
+resource "null_resource" "runners" {
 
   depends_on = [
     azurerm_linux_virtual_machine.github_action
