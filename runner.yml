@@ -27,11 +27,11 @@
           TOKEN: "{{ TOKEN }}"
           ORG: "https://github.com/sdevops5427"
       loop:
-        - runner1
-        - runner2
-        - runner3
-        - runner4
-        - runner5
-        - runner6
+        - a
+        - b
+        - c
+        - d
+        - e
+        - f
       register: out
       ignore_errors: yes
