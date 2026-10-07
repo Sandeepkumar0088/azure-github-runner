@@ -143,7 +143,7 @@ resource "null_resource" "permissions" {
 
   depends_on = [
     azurerm_linux_virtual_machine.github_action,
-    null_resource.jenkins
+    null_resource.runners
   ]
 
   connection {
